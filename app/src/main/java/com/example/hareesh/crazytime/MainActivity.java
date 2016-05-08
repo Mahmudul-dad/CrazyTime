@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,6 +21,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.ViewTreeObserver;
+import android.view.VelocityTracker;
 
 import junit.framework.Assert;
 
@@ -28,7 +30,7 @@ import java.util.Calendar;
 import java.util.Random;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity   {
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -37,9 +39,12 @@ public class MainActivity extends AppCompatActivity {
 
     private GestureDetectorCompat mDetector;
 
+
     //running event repeatedly
     private int mInterval = 10000; // 10 seconds by default, can be changed later
     private Handler mHandler;
+
+    private VelocityTracker mVelocityTracker = null;
 
     private Integer images[] = {R.drawable.sequence0000, R.drawable.sequence0001, R.drawable.sequence0002};
 
@@ -99,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
         return imageView;
     }
 
+
+
     Runnable mStatusChecker = new Runnable() {
         @Override
         public void run() {
@@ -156,10 +163,58 @@ public class MainActivity extends AppCompatActivity {
         mHandler.removeCallbacks(mStatusChecker);
     }
 
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event){
+//
+//    }
+
+
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
+
         this.mDetector.onTouchEvent(event);
-        return super.onTouchEvent(event);
+//        return super.onTouchEvent(event);
+
+        int index = event.getActionIndex();
+        int action = event.getActionMasked();
+        int pointerId = event.getPointerId(index);
+
+        switch(action) {
+            case MotionEvent.ACTION_DOWN:
+                if(mVelocityTracker == null) {
+                    // Retrieve a new VelocityTracker object to watch the velocity of a motion.
+                    mVelocityTracker = VelocityTracker.obtain();
+                }
+                else {
+                    // Reset the velocity tracker back to its initial state.
+                    mVelocityTracker.clear();
+                }
+                // Add a user's movement to the tracker.
+                mVelocityTracker.addMovement(event);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                mVelocityTracker.addMovement(event);
+                // When you want to determine the velocity, call
+                // computeCurrentVelocity(). Then call getXVelocity()
+                // and getYVelocity() to retrieve the velocity for each pointer ID.
+                mVelocityTracker.computeCurrentVelocity(1000);
+                // Log velocity of pixels per second
+                // Best practice to use VelocityTrackerCompat where possible.
+                Log.d("", "X velocity: " +
+                        VelocityTrackerCompat.getXVelocity(mVelocityTracker,
+                                pointerId));
+                Log.d("", "Y velocity: " +
+                        VelocityTrackerCompat.getYVelocity(mVelocityTracker,
+                                pointerId));
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                // Return a VelocityTracker object back to be re-used by others.
+                mVelocityTracker.recycle();
+                mVelocityTracker = null;
+                break;
+        }
+        return true;
     }
 
     class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -205,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                         Random random = new Random();
                         int r = random.nextInt(5);
 
-                        String uri = "@drawable/sequence000" + r;  // where myresource (without the extension) is the file
+                        String uri = "@drawable/a000" + r;  // where myresource (without the extension) is the file
 
                         int imageResource = getResources().getIdentifier(uri, null, getPackageName());
 
