@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +35,7 @@ public class MainActivity extends AppCompatActivity   {
      */
 
     private GestureDetectorCompat mDetector;
+    private float yVel;
 
     //running event repeatedly
     private int mInterval = 10000; // 10 seconds by default, can be changed later
@@ -103,33 +103,33 @@ public class MainActivity extends AppCompatActivity   {
         @Override
         public void run() {
             try {
-                RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutid);
-
-                Calendar c = Calendar.getInstance();
-                long now = c.getTimeInMillis();
-                c.set(Calendar.HOUR_OF_DAY, 0);
-                c.set(Calendar.MINUTE, 0);
-                c.set(Calendar.SECOND, 0);
-                c.set(Calendar.MILLISECOND, 0);
-                long passed = now - c.getTimeInMillis();
-                long secondsPassed = passed / 1000;
-
-                Log.i("image number", "" + secondsPassed);
-
-                Random random = new Random();
-                int r = random.nextInt(5);
-
-                String uri = "@drawable/sequence000" + r;  // where myresource (without the extension) is the file
-
-                int imageResource = getResources().getIdentifier(uri, null, getPackageName());
-
-//                imageview= (ImageView)findViewById(R.id.imageView);
-//                Drawable resImage = getResources().getDrawable(imageResource);
-//                imageView.setImageDrawable(res);
-
-                relativeLayout.setBackgroundResource(imageResource);
-
-                 //this function can change value of mInterval.
+//                RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutid);
+//
+//                Calendar c = Calendar.getInstance();
+//                long now = c.getTimeInMillis();
+//                c.set(Calendar.HOUR_OF_DAY, 0);
+//                c.set(Calendar.MINUTE, 0);
+//                c.set(Calendar.SECOND, 0);
+//                c.set(Calendar.MILLISECOND, 0);
+//                long passed = now - c.getTimeInMillis();
+//                long secondsPassed = passed / 1000;
+//
+////                Log.i("image number", "" + secondsPassed);
+//
+//                Random random = new Random();
+//                int r = random.nextInt(5);
+//
+//                String uri = "@drawable/sequence000" + r;  // where myresource (without the extension) is the file
+//
+//                int imageResource = getResources().getIdentifier(uri, null, getPackageName());
+//
+////                imageview= (ImageView)findViewById(R.id.imageView);
+////                Drawable resImage = getResources().getDrawable(imageResource);
+////                imageView.setImageDrawable(res);
+//
+//                relativeLayout.setBackgroundResource(imageResource);
+//
+//                //this function can change value of mInterval.
             } finally {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
@@ -154,6 +154,45 @@ public class MainActivity extends AppCompatActivity   {
     void stopRepeatingTask() {
         mHandler.removeCallbacks(mStatusChecker);
     }
+
+    /*class TimeScroller extends ScrollView {
+
+        public TimeScroller(){
+        }
+
+        // Edge effect / overscroll tracking objects.
+        private EdgeEffectCompat mEdgeEffectTop;
+        private EdgeEffectCompat mEdgeEffectBottom;
+        private EdgeEffectCompat mEdgeEffectLeft;
+        private EdgeEffectCompat mEdgeEffectRight;
+
+        private boolean mEdgeEffectTopActive;
+        private boolean mEdgeEffectBottomActive;
+        private boolean mEdgeEffectLeftActive;
+        private boolean mEdgeEffectRightActive;
+
+        private OverScroller mScroller;
+
+
+        @Override
+        public void computeScroll() {
+//        super.computeScroll();
+
+            boolean needsInvalidate = false;
+
+            // The scroller isn't finished, meaning a fling or programmatic pan
+            // operation is currently active.
+            if (mScroller.computeScrollOffset()) {
+//            Point surfaceSize = computeScrollSurfaceSize();
+                int currX = mScroller.getCurrX();
+                int currY = mScroller.getCurrY();
+
+                Log.i("scroll x pos: ", "" + currX);
+                Log.i("scroll y pos: ", "" + currY);
+            }
+        }
+    }*/
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -189,14 +228,31 @@ public class MainActivity extends AppCompatActivity   {
                 Log.d("", "X velocity: " +
                         VelocityTrackerCompat.getXVelocity(mVelocityTracker,
                                 pointerId));
-                float Xvel = VelocityTrackerCompat.getXVelocity(mVelocityTracker,pointerId);
-                float YVel = VelocityTrackerCompat.getYVelocity(mVelocityTracker,pointerId);
 
+                yVel = VelocityTrackerCompat.getYVelocity(mVelocityTracker, pointerId);
 
                 Log.d("", "Y velocity: " +
                         VelocityTrackerCompat.getYVelocity(mVelocityTracker,
                                 pointerId));
+//                Scroller mScroller = new Scroller(getApplicationContext());
+//
+//                Log.i("checking", "Scrolling wooohoooooo");
+//
+//                if (mScroller.computeScrollOffset()) {
+//                    // Get current x and y positions
+//                    int currX = mScroller.getCurrX();
+//                    int currY = mScroller.getCurrY();
+//
+//                    Log.i("x pos", "" + currX);
+//                    Log.i("y pos", "" + currY);
+//                } else {
+//                    Log.i("no pos", "no pos");
+//                }
+
+//                computeScroll();
+
                 break;
+
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 // Return a VelocityTracker object back to be re-used by others.
@@ -212,33 +268,20 @@ public class MainActivity extends AppCompatActivity   {
 
         @Override
         public boolean onDown(MotionEvent event) {
-            Log.d(DEBUG_TAG,"onDown: " + event.toString());
+            Log.d(DEBUG_TAG, "onDown: " + event.toString());
             return true;
         }
 
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2,
                                float velocityX, float velocityY) {
-            Log.d(DEBUG_TAG, "onFling: " + event1.toString()+event2.toString());
+            Log.d(DEBUG_TAG, "onFling: " + event1.toString() + event2.toString());
             return true;
         }
 
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            Scroller mScroller = new Scroller(getApplicationContext());
+       @Override
+       public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 
-            Log.i(DEBUG_TAG, "Scrolling wooohoooooo");
-
-            if (mScroller.computeScrollOffset()) {
-                // Get current x and y positions
-                int currX = mScroller.getCurrX();
-                int currY = mScroller.getCurrY();
-
-                Log.i("x pos", "" + currX);
-                Log.i("y pos", "" + currY);
-            } else {
-                Log.i("no pos", "no pos");
-            }
 
             mHandler.postDelayed(new Runnable() {
 
@@ -256,12 +299,53 @@ public class MainActivity extends AppCompatActivity   {
                         long passed = now - c.getTimeInMillis();
                         long secondsPassed = passed / 1000;
 
-                        Log.i("image number", "" + secondsPassed);
+                        Log.i("time now", "" + c.HOUR_OF_DAY + ":" + c.MINUTE + ":" + c.SECOND);
+
+//                        Log.i("image number", "" + secondsPassed);
 
                         Random random = new Random();
-                        int r = random.nextInt(5);
+                        int r = random.nextInt(5598);
 
-                        String uri = "@drawable/a000" + r;  // where myresource (without the extension) is the file
+                        int length = (int) Math.log10(r) + 1;
+
+                        int numberOfMinutes = (int) yVel / 60;
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy hh:mm aaa");
+
+
+                        if (yVel > 0) {
+                            c.add(Calendar.MINUTE, numberOfMinutes);
+                            c.set(Calendar.HOUR_OF_DAY, 0);
+                            c.set(Calendar.MINUTE, 0);
+                            c.set(Calendar.SECOND, 0);
+
+
+                           String date = sdf.format(c.getTime());
+                            Log.i("time down", "" + date);
+
+                        } else if(yVel < 0) {
+                            c.add(Calendar.MINUTE, -numberOfMinutes);
+                            c.set(Calendar.HOUR_OF_DAY, 0);
+                            c.set(Calendar.MINUTE, 0);
+                            c.set(Calendar.SECOND, 0);
+
+                            String date = sdf.format(c.getTime());
+                            Log.i("time down", "" + date);
+                        }
+
+                        String uri = null;
+
+                        if(length == 1){
+                            uri = "@drawable/a000" + r;
+                        } else if(length == 2){
+                            uri = "@drawable/a00" + r;
+                        } else if(length == 3){
+                            uri = "@drawable/a0" + r;
+                        } else  if(length == 4){
+                            uri = "@drawable/a" + r;
+                        }
+
+                          // where myresource (without the extension) is the file
 
                         int imageResource = getResources().getIdentifier(uri, null, getPackageName());
 
