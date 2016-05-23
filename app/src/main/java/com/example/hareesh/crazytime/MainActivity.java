@@ -1,6 +1,7 @@
 package com.example.hareesh.crazytime;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.GestureDetectorCompat;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import junit.framework.Assert;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Random;
@@ -56,6 +58,9 @@ public class MainActivity extends AppCompatActivity   {
         //get current time
         Calendar c = Calendar.getInstance();
         System.out.println("Current time => " + c.getTime());
+
+        Intent intent = getIntent();
+
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String formattedDate = df.format(c.getTime());
@@ -290,18 +295,8 @@ public class MainActivity extends AppCompatActivity   {
                     try {
                         RelativeLayout linearLayout = (RelativeLayout) findViewById(R.id.relativeLayoutid);
 
-                        Calendar c = Calendar.getInstance();
-                        long now = c.getTimeInMillis();
-                        c.set(Calendar.HOUR_OF_DAY, 0);
-                        c.set(Calendar.MINUTE, 0);
-                        c.set(Calendar.SECOND, 0);
-                        c.set(Calendar.MILLISECOND, 0);
-                        long passed = now - c.getTimeInMillis();
-                        long secondsPassed = passed / 1000;
-
-                        Log.i("time now", "" + c.HOUR_OF_DAY + ":" + c.MINUTE + ":" + c.SECOND);
-
-//                        Log.i("image number", "" + secondsPassed);
+                        DateFormat dateFormat = new SimpleDateFormat("d MMM dd HH:mm");
+                        Calendar cal = Calendar.getInstance();
 
                         Random random = new Random();
                         int r = random.nextInt(5598);
@@ -310,27 +305,13 @@ public class MainActivity extends AppCompatActivity   {
 
                         int numberOfMinutes = (int) yVel / 60;
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy hh:mm aaa");
-
-
                         if (yVel > 0) {
-                            c.add(Calendar.MINUTE, numberOfMinutes);
-                            c.set(Calendar.HOUR_OF_DAY, 0);
-                            c.set(Calendar.MINUTE, 0);
-                            c.set(Calendar.SECOND, 0);
+                            cal.add(Calendar.MINUTE, -numberOfMinutes);
+                            Log.i("time down", "" + dateFormat.format(cal.getTime()));
 
-
-                           String date = sdf.format(c.getTime());
-                            Log.i("time down", "" + date);
-
-                        } else if(yVel < 0) {
-                            c.add(Calendar.MINUTE, -numberOfMinutes);
-                            c.set(Calendar.HOUR_OF_DAY, 0);
-                            c.set(Calendar.MINUTE, 0);
-                            c.set(Calendar.SECOND, 0);
-
-                            String date = sdf.format(c.getTime());
-                            Log.i("time down", "" + date);
+                        } else if (yVel < 0) {
+                            cal.add(Calendar.MINUTE, -numberOfMinutes);
+                            Log.i("time up", "" + dateFormat.format(cal.getTime()));
                         }
 
                         String uri = null;
@@ -345,7 +326,7 @@ public class MainActivity extends AppCompatActivity   {
                             uri = "@drawable/a" + r;
                         }
 
-                          // where myresource (without the extension) is the file
+                        // where myresource (without the extension) is the file
 
                         int imageResource = getResources().getIdentifier(uri, null, getPackageName());
 
