@@ -317,13 +317,13 @@ public class MainActivity extends AppCompatActivity   {
                         String uri = null;
 
                         if(length == 1){
-                            uri = "@drawable/a000" + r;
+                            uri = "@drawable/a_000" + r;
                         } else if(length == 2){
-                            uri = "@drawable/a00" + r;
+                            uri = "@drawable/a_00" + r;
                         } else if(length == 3){
-                            uri = "@drawable/a0" + r;
+                            uri = "@drawable/a_0" + r;
                         } else  if(length == 4){
-                            uri = "@drawable/a" + r;
+                            uri = "@drawable/a_" + r;
                         }
 
                         // where myresource (without the extension) is the file
