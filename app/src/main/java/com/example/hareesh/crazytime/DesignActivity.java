@@ -1,5 +1,6 @@
 package com.example.hareesh.crazytime;
 
+import com.example.hareesh.crazytime.util.Constants;
 import com.example.hareesh.crazytime.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -96,28 +97,12 @@ public class DesignActivity extends Activity {
                         }
                     }
                 });
-
-        // Set up the user interaction to manually show or hide the system UI.
-        contentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (TOGGLE_ON_CLICK) {
-                    mSystemUiHider.toggle();
-                } else {
-                    mSystemUiHider.show();
-                }
-            }
-        });
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        //findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
     }
 
     public void playVideoOne(View view){
         ///play it
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(Constants.PLACE_NAME, Constants.DUBAI);
         startActivity(intent);
         finish();
     }
@@ -125,6 +110,7 @@ public class DesignActivity extends Activity {
     public void playVideoTwo(View view){
         ///play it
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(Constants.PLACE_NAME, Constants.LONDON);
         startActivity(intent);
         finish();
     }
@@ -132,6 +118,7 @@ public class DesignActivity extends Activity {
     public void playVideoThree(View view){
         ///play it
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(Constants.PLACE_NAME, Constants.PHOENIX);
         startActivity(intent);
         finish();
     }
